@@ -1,5 +1,8 @@
 from app.app import create_app
 from app.config import Config
+from app.dao.model.director import Director
+from app.dao.model.genre import Genre
+from app.dao.model.movie import Movie
 from app.setup_db import db
 
 

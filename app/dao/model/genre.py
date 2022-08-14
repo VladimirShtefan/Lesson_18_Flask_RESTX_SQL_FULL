@@ -11,7 +11,7 @@ class Genre(db.Model):
 
 
 genre_model = api.model(
-    'Director',
+    'Genre',
     {
         'pk': fields.Integer(attribute='id', required=True),
         'name': fields.String(required=True, max_length=50),

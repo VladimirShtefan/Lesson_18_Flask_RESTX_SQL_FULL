@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, g
 
 from app.setup_api import api
 from app.setup_db import db
@@ -15,6 +15,22 @@ def create_app(config_object) -> Flask:
     application.config.from_object(config_object)
     register_extensions(application)
     logger.info('app created')
+
+    @application.before_request
+    def open_session():
+        g.session = db.session
+
+    @application.after_request
+    def close_session(response):
+        if getattr(g, 'session'):
+            try:
+                g.session.commit()
+            except:
+                g.session.rollback()
+            finally:
+                g.session.close()
+        return response
+
     return application
 
 
