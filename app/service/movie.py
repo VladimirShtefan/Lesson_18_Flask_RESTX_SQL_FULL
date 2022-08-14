@@ -19,7 +19,6 @@ class MovieService(BaseService[Movie]):
         return self.dao.get_all_movies(director_name, director_id, genre_name, genre_id, year)
 
     def add_movie(self, **kwargs) -> Movie:
-        # return self.dao.add_row(self.dao.__model__(**kwargs))
         title = kwargs.get('title')
         description = kwargs.get('description')
         trailer = kwargs.get('trailer')

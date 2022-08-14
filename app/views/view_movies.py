@@ -18,7 +18,6 @@ class MoviesView(Resource):
     @movie_ns.expect(movie_model_parser)
     @movie_ns.marshal_list_with(movie_model, code=201, description='Created')
     @movie_ns.response(code=400, description='Bad request')
-    @movie_ns.response(code=409, description='Record already exists')
     def post(self):
         data = movie_model_parser.parse_args()
         return MovieService().add_movie(**data), 201
@@ -27,6 +26,7 @@ class MoviesView(Resource):
 @movie_ns.route('/<int:mid>')
 class MovieView(Resource):
     @movie_ns.marshal_with(movie_model, code=200)
+    @movie_ns.response(code=404, description='Id not found')
     def get(self, mid: int):
         return MovieService().get_item_by_id(mid), 200
 

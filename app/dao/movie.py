@@ -1,4 +1,6 @@
 from typing import List
+from flask_restx import abort
+from sqlalchemy.exc import IntegrityError
 
 from app.dao.base import BaseDAO
 from app.dao.model.director import Director
@@ -68,6 +70,7 @@ class MovieDAO(BaseDAO[Movie]):
         self._db_session.add(new_movie)
         try:
             self._db_session.flush()
-        except:
+        except IntegrityError as e:
             self._db_session.rollback()
+            abort(400, e.orig)
         return new_movie

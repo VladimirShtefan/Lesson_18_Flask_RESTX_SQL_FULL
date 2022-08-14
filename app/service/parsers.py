@@ -15,8 +15,6 @@ movie_model_parser.add_argument('trailer', location='json', type=str, required=F
 movie_model_parser.add_argument('year', location='json', type=int, required=False, nullable=True)
 movie_model_parser.add_argument('rating', location='json', type=float, required=False, nullable=True)
 movie_model_parser.add_argument('genre_name', location='json', type=str, required=False, nullable=True)
-# movie_model_parser.add_argument('genre_id', location='json', type=int, required=True, nullable=False)
-# movie_model_parser.add_argument('director_id', location='json', type=int, required=True, nullable=False)
 movie_model_parser.add_argument('director_name', location='json', type=str, required=False, nullable=True)
 
 name_model_parser: RequestParser = RequestParser()

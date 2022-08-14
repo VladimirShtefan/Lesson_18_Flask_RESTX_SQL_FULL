@@ -12,6 +12,7 @@ class Config(object):
     RESTX_MASK_SWAGGER = False
     DEBUG = False
     TESTING = False
+    # ERROR_INCLUDE_MESSAGE = False
 
 
 class DevConfig(Config):
