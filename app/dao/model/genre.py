@@ -13,7 +13,7 @@ class Genre(db.Model):
 genre_model = api.model(
     'Genre',
     {
-        'pk': fields.Integer(attribute='id', required=True),
-        'name': fields.String(required=True, max_length=50),
+        'pk': fields.Integer(attribute='id', required=True, example=12),
+        'name': fields.String(required=True, max_length=50, example='Приключения'),
     }
 )

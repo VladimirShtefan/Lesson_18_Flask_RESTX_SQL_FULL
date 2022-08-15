@@ -13,12 +13,11 @@ class BaseDAO(Generic[T]):
         self._db_session = g.session
 
     def get_one_by_id(self, id: int) -> T:
-        return self._db_session.query(self.__model__).get_or_404(id)
+        return self._db_session.query(self.__model__).get_or_404(id, description='Id not found')
 
-    def delete_row(self, id: int):
-        movie = self._db_session.query(self.__model__).get_or_404(id)
+    def delete_row(self, id: int) -> None:
+        movie = self._db_session.query(self.__model__).get_or_404(id, description='Id not found')
         self._db_session.delete(movie)
 
-    def update_row(self, id: int, **kwargs) -> None:
-        self._db_session.query(self.__model__).filter_by(id=id).update(kwargs)
-        # self._db_session.commit()
+    def get_all_items(self) -> List[T]:
+        return self._db_session.query(self.__model__).all()

@@ -23,14 +23,14 @@ class Movie(db.Model):
 movie_model = api.model(
     'Movie',
     {
-        'id': fields.Integer(required=True),
-        'title': fields.String(max_length=50, required=True),
-        'description': fields.String(max_length=255),
-        'trailer': fields.String(max_length=255),
-        'year': fields.Integer(min=0),
-        'rating': fields.Float(min=0.0, max=10.0),
-        'genre_id': fields.Integer(required=True),
-        'director_id': fields.Integer(required=True),
+        'id': fields.Integer(required=True, example=12),
+        'title': fields.String(max_length=50, required=True, example='Робин Гуд'),
+        'description': fields.String(max_length=255, example='Описание фильма'),
+        'trailer': fields.String(max_length=255, example='https://film_url.ru'),
+        'year': fields.Integer(min=0, example=2022),
+        'rating': fields.Float(min=0.0, max=10.0, example=8.9),
+        'genre_id': fields.Integer(required=True, example=12),
+        'director_id': fields.Integer(required=True, example=4),
         'genre': fields.Nested(genre_model),
         'director': fields.Nested(director_model),
     }

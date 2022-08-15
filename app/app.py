@@ -1,5 +1,6 @@
 from flask import Flask, g
 
+from app.exceptions import BadRequest
 from app.setup_api import api
 from app.setup_db import db
 from app.views.view_directors import director_ns
@@ -30,7 +31,6 @@ def create_app(config_object) -> Flask:
             finally:
                 g.session.close()
         return response
-
     return application
 
 
@@ -40,3 +40,10 @@ def register_extensions(app: Flask):
     api.add_namespace(movie_ns)
     api.add_namespace(genre_ns)
     api.add_namespace(director_ns)
+
+    @api.errorhandler(BadRequest)
+    def bad_request_400(e: BadRequest):
+        return {
+                   'error': str(e.message),
+                   'code': e.code
+               }, e.code

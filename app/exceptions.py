@@ -1,8 +1,12 @@
 class BaseAppException(Exception):
+    def __init__(self, message: str):
+        self.message = message
     code = 500
-    message = 'Что то пошло не так'
 
 
-class MovieNotFound(BaseAppException):
+class NotFound(BaseAppException):
     code = 404
-    message = 'Фильм с текущим id не найден'
+
+
+class BadRequest(BaseAppException):
+    code = 400

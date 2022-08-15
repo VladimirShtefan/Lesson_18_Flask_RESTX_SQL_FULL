@@ -13,7 +13,7 @@ class Director(db.Model):
 director_model = api.model(
     'Director',
     {
-        'pk': fields.Integer(attribute='id', required=True),
-        'name': fields.String(required=True, max_length=50),
+        'pk': fields.Integer(attribute='id', required=True, example=4),
+        'name': fields.String(required=True, max_length=50, example='Пьетро Скалия'),
     }
 )

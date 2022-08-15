@@ -10,6 +10,24 @@ class MovieService(BaseService[Movie]):
         super().__init__()
         self.dao = MovieDAO()
 
+    @staticmethod
+    def get_director_and_genre_id(**kwargs):
+        title = kwargs.get('title')
+        description = kwargs.get('description')
+        trailer = kwargs.get('trailer')
+        year = kwargs.get('year')
+        rating = kwargs.get('rating')
+        genre_name = kwargs.get('genre_name')
+        director_name = kwargs.get('director_name')
+        return {'title': title,
+                'description': description,
+                'trailer': trailer,
+                'year': year,
+                'rating': rating,
+                'genre_name': genre_name,
+                'director_name': director_name
+                }
+
     def get_movies(self, **kwargs) -> List[Movie]:
         director_name = kwargs.get('director_name')
         director_id = kwargs.get('director_id')
@@ -19,12 +37,15 @@ class MovieService(BaseService[Movie]):
         return self.dao.get_all_movies(director_name, director_id, genre_name, genre_id, year)
 
     def add_movie(self, **kwargs) -> Movie:
-        title = kwargs.get('title')
-        description = kwargs.get('description')
-        trailer = kwargs.get('trailer')
-        year = kwargs.get('year')
-        rating = kwargs.get('rating')
-        genre_name = kwargs.get('genre_name')
-        director_name = kwargs.get('director_name')
-        new_movie = self.dao.add_movie(title, description, trailer, year, rating, genre_name, director_name)
-        return new_movie
+        items = self.get_director_and_genre_id(**kwargs)
+        return self.dao.add_movie(**items)
+
+    def put_movie(self, id: int, **kwargs):
+        items = self.get_director_and_genre_id(**kwargs)
+        return self.dao.put_movie(id=id, **items)
+
+    def delete_movie(self, id: int):
+        return self.dao.delete_row(id=id)
+
+    def get_movie(self, id: int):
+        return self.dao.get_one_by_id(id=id)
