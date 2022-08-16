@@ -42,7 +42,7 @@ class MovieDAO(BaseDAO[Movie]):
                     movie_query = movie_query.join(Director).filter(getattr(Director, key).ilike(f'%{item}%'))
             if hasattr(Genre, key):
                 if type(item) == str:
-                    movie_query = movie_query.join(Genre).filter(getattr(Genre, key)).like(f'%{item}%')
+                    movie_query = movie_query.join(Genre).filter(getattr(Genre, key)).ilike(f'%{item}%')
             if hasattr(Movie, key):
                 movie_query = movie_query.filter(getattr(Movie, key) == item)
         return movie_query.all()
