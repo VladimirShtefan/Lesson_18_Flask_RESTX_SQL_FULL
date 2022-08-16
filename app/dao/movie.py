@@ -34,25 +34,17 @@ class MovieDAO(BaseDAO[Movie]):
             genre_id = genre.id
         return director_id, genre_id
 
-    def get_all_movies(self,
-                       director_name: str,
-                       director_id: int,
-                       genre_name: str,
-                       genre_id: int,
-                       year: int
-                       ) -> List[Movie]:
-
+    def get_all_movies(self, **kwargs) -> List[Movie]:
         movie_query = self._db_session.query(Movie)
-        if director_name:
-            movie_query = movie_query.join(Director).filter(Director.name.ilike(f'%{director_name}%'))
-        if genre_name:
-            movie_query = movie_query.join(Genre).filter(Genre.name.ilike(f'%{genre_name}%'))
-        if year:
-            movie_query = movie_query.filter(Movie.year == year)
-        if director_id:
-            movie_query = movie_query.filter(Movie.director_id == director_id)
-        if genre_id:
-            movie_query = movie_query.filter(Movie.genre_id == genre_id)
+        for key, item in kwargs.items():
+            if hasattr(Director, key):
+                if type(item) == str:
+                    movie_query = movie_query.join(Director).filter(getattr(Director, key).ilike(f'%{item}%'))
+            if hasattr(Genre, key):
+                if type(item) == str:
+                    movie_query = movie_query.join(Genre).filter(getattr(Genre, key)).like(f'%{item}%')
+            if hasattr(Movie, key):
+                movie_query = movie_query.filter(getattr(Movie, key) == item)
         return movie_query.all()
 
     def add_movie(self, genre_name: str, director_name: str, **kwargs) -> Movie:

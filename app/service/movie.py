@@ -29,12 +29,7 @@ class MovieService(BaseService[Movie]):
                 }
 
     def get_movies(self, **kwargs) -> List[Movie]:
-        director_name = kwargs.get('director_name')
-        director_id = kwargs.get('director_id')
-        genre_name = kwargs.get('genre_name')
-        genre_id = kwargs.get('genre_id')
-        year = kwargs.get('year')
-        return self.dao.get_all_movies(director_name, director_id, genre_name, genre_id, year)
+        return self.dao.get_all_movies(**kwargs)
 
     def add_movie(self, **kwargs) -> Movie:
         items = self.add_dict_with_data(**kwargs)

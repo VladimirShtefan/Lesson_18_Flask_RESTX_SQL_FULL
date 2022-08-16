@@ -2,11 +2,11 @@ from flask_restx.reqparse import RequestParser
 
 
 movie_filter_parser: RequestParser = RequestParser()
-movie_filter_parser.add_argument('director_name', type=str, location='args')
-movie_filter_parser.add_argument('genre_name', type=str, location='args')
-movie_filter_parser.add_argument('director_id', type=int, location='args')
-movie_filter_parser.add_argument('genre_id', type=int, location='args')
-movie_filter_parser.add_argument('year', type=int, location='args')
+movie_filter_parser.add_argument('director_name', type=str, location='args', store_missing=False)
+movie_filter_parser.add_argument('genre_name', type=str, location='args', store_missing=False)
+movie_filter_parser.add_argument('director_id', type=int, location='args', store_missing=False)
+movie_filter_parser.add_argument('genre_id', type=int, location='args', store_missing=False)
+movie_filter_parser.add_argument('year', type=int, location='args', store_missing=False)
 
 movie_model_parser: RequestParser = RequestParser()
 movie_model_parser.add_argument('title', location='json', type=str, required=True, nullable=False)
