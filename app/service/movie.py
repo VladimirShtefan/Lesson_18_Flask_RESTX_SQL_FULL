@@ -11,7 +11,7 @@ class MovieService(BaseService[Movie]):
         self.dao = MovieDAO()
 
     @staticmethod
-    def get_director_and_genre_id(**kwargs):
+    def add_dict_with_data(**kwargs):
         title = kwargs.get('title')
         description = kwargs.get('description')
         trailer = kwargs.get('trailer')
@@ -37,11 +37,11 @@ class MovieService(BaseService[Movie]):
         return self.dao.get_all_movies(director_name, director_id, genre_name, genre_id, year)
 
     def add_movie(self, **kwargs) -> Movie:
-        items = self.get_director_and_genre_id(**kwargs)
+        items = self.add_dict_with_data(**kwargs)
         return self.dao.add_movie(**items)
 
     def put_movie(self, id: int, **kwargs):
-        items = self.get_director_and_genre_id(**kwargs)
+        items = self.add_dict_with_data(**kwargs)
         return self.dao.put_movie(id=id, **items)
 
     def delete_movie(self, id: int):

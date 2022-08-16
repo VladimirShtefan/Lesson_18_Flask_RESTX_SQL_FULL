@@ -40,10 +40,10 @@ class MovieView(Resource):
     def put(self, mid: int):
         data = movie_model_parser.parse_args()
         MovieService().put_movie(mid, **data)
-        return None, 201
+        return "", 201
 
     @movie_ns.response(code=204, description='Deleted')
     @movie_ns.response(code=404, description='Id not found', model=not_found_model)
     def delete(self, mid: int):
         MovieService().delete_movie(mid)
-        return None, 204
+        return "", 204
