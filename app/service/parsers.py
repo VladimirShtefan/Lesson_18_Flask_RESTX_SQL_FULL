@@ -19,3 +19,8 @@ movie_model_parser.add_argument('director_name', location='json', type=str, requ
 
 name_model_parser: RequestParser = RequestParser()
 name_model_parser.add_argument('name', location='json', type=str, required=True, nullable=False)
+
+user_parser: RequestParser = RequestParser()
+user_parser.add_argument('name', location='json', type=str, required=True, nullable=False)
+user_parser.add_argument('password', location='json', type=str, required=True, nullable=False)
+user_parser.add_argument('role', location='json', type=str, required=True, nullable=False)

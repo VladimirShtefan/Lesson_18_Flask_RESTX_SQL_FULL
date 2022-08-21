@@ -10,8 +10,5 @@ class DirectorService(BaseService[Director]):
         super().__init__()
         self.dao = DirectorDAO()
 
-    def get_all_directors(self) -> List[Director]:
-        return self.dao.get_all_items()
-
-    def get_director(self, did: int) -> Director:
-        return self.dao.get_one_by_id(did)
+    def put_director(self, did: int, **kwargs):
+        return self.dao.put_director(did, **kwargs)

@@ -1,5 +1,5 @@
 from typing import List
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, InvalidRequestError
 
 from app.dao.base import BaseDAO
 from app.dao.model.director import Director
@@ -74,3 +74,7 @@ class MovieDAO(BaseDAO[Movie]):
             self._db_session.rollback()
             logger.info(e.orig)
             raise BadRequest(e.orig)
+        except InvalidRequestError as e:
+            self._db_session.rollback()
+            logger.info(e.args[0])
+            raise BadRequest(e.args[0])
