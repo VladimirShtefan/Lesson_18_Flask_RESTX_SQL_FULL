@@ -14,6 +14,7 @@ genre_ns = Namespace('genres')
 class GenresView(Resource):
     @user_required(['user', 'admin'])
     @genre_ns.marshal_list_with(genre_model, code=200)
+    @genre_ns.response(code=401, description='Unauthorized')
     def get(self):
         return GenreService().get_all_items(), 200
 
@@ -21,6 +22,7 @@ class GenresView(Resource):
     @genre_ns.expect(name_model_parser)
     @genre_ns.marshal_list_with(genre_model, code=201, description='Created')
     @genre_ns.response(code=400, description='Bad request', model=bad_request_model)
+    @genre_ns.response(code=401, description='Unauthorized')
     def post(self):
         data = name_model_parser.parse_args()
         request = GenreService().add_genre(**data)
@@ -32,6 +34,7 @@ class GenreView(Resource):
     @user_required(['user', 'admin'])
     @genre_ns.marshal_with(genre_model, code=200)
     @genre_ns.response(code=404, description='Id not found', model=not_found_model)
+    @genre_ns.response(code=401, description='Unauthorized')
     def get(self, gid: int):
         return GenreService().get_item_by_id(gid), 200
 
@@ -40,6 +43,7 @@ class GenreView(Resource):
     @genre_ns.response(code=204, description='Updated')
     @genre_ns.response(code=404, description='Id not found', model=not_found_model)
     @genre_ns.response(code=400, description='Bad request', model=bad_request_model)
+    @genre_ns.response(code=401, description='Unauthorized')
     def put(self, gid: int):
         data = name_model_parser.parse_args()
         GenreService().put_genre(gid, **data)
@@ -48,6 +52,7 @@ class GenreView(Resource):
     @user_required(['admin'])
     @genre_ns.response(code=204, description='Deleted')
     @genre_ns.response(code=404, description='Id not found', model=not_found_model)
+    @genre_ns.response(code=401, description='Unauthorized')
     def delete(self, gid: int):
         GenreService().del_item(gid)
         return "", 204
