@@ -1,4 +1,3 @@
-from datetime import datetime
 import enum
 
 from flask_restx import fields

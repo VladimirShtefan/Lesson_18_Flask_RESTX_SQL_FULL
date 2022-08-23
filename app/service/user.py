@@ -6,11 +6,10 @@ import jwt
 from datetime import datetime, timedelta
 from jwt.exceptions import ExpiredSignatureError
 
-from app.constants import SECRET, ALGORITHMS
+from app.constants import SECRET, ALGORITHMS, PWD_HASH_SALT, PWD_HASH_ITERATIONS
 from app.dao.model.user import User
 from app.dao.user import UserDAO
 from app.exceptions import ValidationError, UserNotFound, InvalidPassword, TokenExpired
-from app.helpers.constants import PWD_HASH_SALT, PWD_HASH_ITERATIONS
 from app.service.base import BaseService
 
 pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$'
@@ -88,4 +87,3 @@ class UserService(BaseService[User]):
     def update_tokens(self, tokens: dict) -> dict:
         refresh_token = tokens.get('refresh_token')
         return self.approve_refresh_token(refresh_token)
-

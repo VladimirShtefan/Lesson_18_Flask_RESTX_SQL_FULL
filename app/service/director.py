@@ -1,5 +1,3 @@
-from typing import List
-
 from app.dao.director import DirectorDAO
 from app.dao.model.director import Director
 from app.service.base import BaseService

@@ -1,5 +1,3 @@
-from typing import List
-
 from app.dao.genre import GenreDAO
 from app.dao.model.genre import Genre
 from app.service.base import BaseService

@@ -26,3 +26,7 @@ class InvalidPassword(BaseAppException):
 
 class TokenExpired(BaseAppException):
     code = 401
+
+
+class AccessDenied(BaseAppException):
+    code = 401
