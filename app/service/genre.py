@@ -12,3 +12,6 @@ class GenreService(BaseService[Genre]):
 
     def put_genre(self, gid: int, **kwargs):
         return self.dao.put_genre(gid, **kwargs)
+
+    def add_genre(self, **kwargs) -> Genre:
+        return self.dao.add_genre(**kwargs)

@@ -18,3 +18,17 @@ not_found_model = api.model(
         ),
     }
 )
+
+validation_error = api.model(
+    'ValidationError',
+    {
+        'error': fields.String(example="Password has incorrect format."),
+    }
+)
+
+unauthorized_error = api.model(
+    'Unauthorized',
+    {
+        'error': fields.String(example="Unauthorized"),
+    }
+)

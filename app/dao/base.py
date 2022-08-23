@@ -16,8 +16,8 @@ class BaseDAO(Generic[T]):
         return self._db_session.query(self.__model__).get_or_404(id, description='Id not found')
 
     def delete_row(self, id: int) -> None:
-        movie = self._db_session.query(self.__model__).get_or_404(id, description='Id not found')
-        self._db_session.delete(movie)
+        model = self._db_session.query(self.__model__).get_or_404(id, description='Id not found')
+        self._db_session.delete(model)
 
     def get_all_items(self) -> List[T]:
         return self._db_session.query(self.__model__).all()

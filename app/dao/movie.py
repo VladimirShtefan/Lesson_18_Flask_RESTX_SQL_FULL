@@ -16,17 +16,17 @@ class MovieDAO(BaseDAO[Movie]):
     __model__ = Movie
 
     def get_director_and_genre_id(self, genre_name: str, director_name: str) -> tuple[int, int]:
-        director = self._db_session.query(Director).filter(Director.name.ilike(director_name)).first()
-        genre = self._db_session.query(Genre).filter(Genre.name.ilike(genre_name)).first()
+        director = self._db_session.query(Director).filter(Director.director_name.ilike(director_name)).first()
+        genre = self._db_session.query(Genre).filter(Genre.genre_name.ilike(genre_name)).first()
         if not director:
-            director_model = Director(name=director_name)
+            director_model = Director(director_name=director_name)
             self._db_session.add(director_model)
             self._db_session.flush()
             director_id = director_model.id
         else:
             director_id = director.id
         if not genre:
-            genre_model = Genre(name=genre_name)
+            genre_model = Genre(genre_name=genre_name)
             self._db_session.add(genre_model)
             self._db_session.flush()
             genre_id = genre_model.id
@@ -47,34 +47,44 @@ class MovieDAO(BaseDAO[Movie]):
                 movie_query = movie_query.filter(getattr(Movie, key) == item)
         return movie_query.all()
 
-    def add_movie(self, genre_name: str, director_name: str, **kwargs) -> Movie:
-        director_id, genre_id = self.get_director_and_genre_id(genre_name=genre_name, director_name=director_name)
-        data = {'director_id': director_id, 'genre_id': genre_id}
-        data.update(kwargs)
+    def add_movie(self, **kwargs) -> Movie:
+        genre_name = kwargs.pop('genre_name')
+        director_name = kwargs.pop('director_name')
+        if director_name and genre_name:
+            director_id, genre_id = self.get_director_and_genre_id(genre_name=genre_name, director_name=director_name)
+            data = {'director_id': director_id, 'genre_id': genre_id}
+            data.update(kwargs)
 
-        new_movie = Movie(**data)
+            new_movie = Movie(**data)
 
-        self._db_session.add(new_movie)
-        try:
-            self._db_session.flush()
-        except IntegrityError as e:
-            self._db_session.rollback()
-            logger.info(e.orig)
-            raise BadRequest(e.orig)
-        else:
-            return new_movie
+            self._db_session.add(new_movie)
+            try:
+                self._db_session.flush()
+            except IntegrityError as e:
+                self._db_session.rollback()
+                logger.info(e.orig)
+                raise BadRequest(e.orig)
+            else:
+                return new_movie
+        raise BadRequest('Attribute error. genre_name or director_name is None')
 
-    def put_movie(self, id: int, genre_name: str, director_name: str, **kwargs):
-        director_id, genre_id = self.get_director_and_genre_id(genre_name=genre_name, director_name=director_name)
-        data = {'director_id': director_id, 'genre_id': genre_id}
-        data.update(kwargs)
-        try:
-            self._db_session.query(Movie).filter_by(id=id).update(data)
-        except IntegrityError as e:
-            self._db_session.rollback()
-            logger.info(e.orig)
-            raise BadRequest(e.orig)
-        except InvalidRequestError as e:
-            self._db_session.rollback()
-            logger.info(e.args[0])
-            raise BadRequest(e.args[0])
+    def put_movie(self, id: int, **kwargs):
+        genre_name = kwargs.pop('genre_name')
+        director_name = kwargs.pop('director_name')
+        if director_name and genre_name:
+            director_id, genre_id = self.get_director_and_genre_id(genre_name=genre_name, director_name=director_name)
+            data = {'director_id': director_id, 'genre_id': genre_id}
+            data.update(kwargs)
+            try:
+                self._db_session.query(Movie).filter_by(id=id).update(data)
+            except IntegrityError as e:
+                self._db_session.rollback()
+                logger.info(e.orig)
+                raise BadRequest(e.orig)
+            except InvalidRequestError as e:
+                self._db_session.rollback()
+                logger.info(e.args[0])
+                raise BadRequest(e.args[0])
+            else:
+                return ""
+        raise BadRequest('Attribute error. genre_name or director_name is None')

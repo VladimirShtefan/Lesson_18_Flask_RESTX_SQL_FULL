@@ -23,3 +23,16 @@ class DirectorDAO(BaseDAO[Director]):
             self._db_session.rollback()
             logger.info(e.args[0])
             raise BadRequest(e.args[0])
+
+    def add_director(self, **kwargs):
+        director_name = kwargs.get('name')
+        new_director = Director(director_name=director_name)
+        self._db_session.add(new_director)
+        try:
+            self._db_session.flush()
+        except IntegrityError as e:
+            self._db_session.rollback()
+            logger.info(e.orig)
+            raise BadRequest(e.orig)
+        else:
+            return new_director

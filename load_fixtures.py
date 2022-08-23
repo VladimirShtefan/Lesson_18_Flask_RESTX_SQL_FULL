@@ -42,6 +42,7 @@ def _load_fixtures():
     try:
         db.session.commit()
         logger.info('База создана успешно')
+        print('База заполнена')
         db.session.close()
     except IntegrityError:
         logger.info('База уже создана или переданы не верные данные, проверьте базу')

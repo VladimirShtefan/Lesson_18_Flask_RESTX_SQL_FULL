@@ -1,5 +1,6 @@
 from flask_restx.reqparse import RequestParser
 
+from app.dao.model.user import Role
 
 movie_filter_parser: RequestParser = RequestParser()
 movie_filter_parser.add_argument('director_name', type=str, location='args', store_missing=False)
@@ -21,6 +22,15 @@ name_model_parser: RequestParser = RequestParser()
 name_model_parser.add_argument('name', location='json', type=str, required=True, nullable=False)
 
 user_parser: RequestParser = RequestParser()
-user_parser.add_argument('name', location='json', type=str, required=True, nullable=False)
+user_parser.add_argument('username', location='json', type=str, required=True, nullable=False)
 user_parser.add_argument('password', location='json', type=str, required=True, nullable=False)
-user_parser.add_argument('role', location='json', type=str, required=True, nullable=False)
+user_parser.add_argument('role', default='user', choices=[x.name for x in Role],
+                         location='json', type=str, required=True, nullable=False)
+
+access_parser: RequestParser = RequestParser()
+access_parser.add_argument('access_token', location='headers', type=str, required=True, nullable=False)
+access_parser.add_argument('refresh_token', location='headers', type=str, required=True, nullable=False)
+
+login_parser: RequestParser = RequestParser()
+login_parser.add_argument('username', location='json', type=str, required=True, nullable=False)
+login_parser.add_argument('password', location='json', type=str, required=True, nullable=False)

@@ -1,27 +1,21 @@
 from flask_restx import Namespace, Resource
 
-from app.dao.model.user import user_model
-from app.service.parsers import user_parser
+from app.dao.model.exceptions import unauthorized_error
+from app.dao.model.user import token_model
+from app.service.parsers import login_parser
 from app.service.user import UserService
 
-user_ns = Namespace('auth')
+auth_ns = Namespace('auth')
 
 
-@user_ns.route('/')
-class UserView(Resource):
-    # @user_ns.expect(user_parser)
-    # @user_ns.marshal_list_with(movie_model, code=200)
-    def put(self):
-    #     data = movie_filter_parser.parse_args()
-    #     return MovieService().get_movies(**data), 200
-        pass
-
-    @user_ns.expect(user_parser)
-    @user_ns.marshal_list_with(user_model, code=201, description='Created')
-    # @movie_ns.response(code=400, description='Bad request', model=bad_request_model)
+@auth_ns.route('/')
+class AuthView(Resource):
+    @auth_ns.expect(login_parser)
+    @auth_ns.marshal_list_with(token_model, code=201, description='Tokens created')
+    @auth_ns.response(code=401, description='Unauthorized', model=unauthorized_error)
     def post(self):
-        data = user_parser.parse_args()
-        request = UserService().search_user(**data)
+        data = login_parser.parse_args()
+        tokens = UserService().search_user(**data)
+        return tokens, 201
 
-        # return request, 201, {'Location': url_for('movies_movie_view', mid=request.id)}
-        return ""
+

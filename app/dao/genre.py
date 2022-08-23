@@ -23,3 +23,16 @@ class GenreDAO(BaseDAO[Genre]):
             self._db_session.rollback()
             logger.info(e.args[0])
             raise BadRequest(e.args[0])
+
+    def add_genre(self, **kwargs) -> Genre:
+        genre_name = kwargs.get('name')
+        new_genre = Genre(genre_name=genre_name)
+        self._db_session.add(new_genre)
+        try:
+            self._db_session.flush()
+        except IntegrityError as e:
+            self._db_session.rollback()
+            logger.info(e.orig)
+            raise BadRequest(e.orig)
+        else:
+            return new_genre

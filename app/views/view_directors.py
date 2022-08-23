@@ -1,4 +1,5 @@
 from flask_restx import Namespace, Resource
+from flask import url_for
 
 from app.dao.model.director import director_model
 from app.dao.model.exceptions import not_found_model, bad_request_model
@@ -13,6 +14,14 @@ class DirectorsView(Resource):
     @director_ns.marshal_list_with(director_model, code=200)
     def get(self):
         return DirectorService().get_all_items(), 200
+
+    @director_ns.expect(name_model_parser)
+    @director_ns.marshal_list_with(director_model, code=201, description='Created')
+    @director_ns.response(code=400, description='Bad request', model=bad_request_model)
+    def post(self):
+        data = name_model_parser.parse_args()
+        request = DirectorService().add_director(**data)
+        return request, 201, {'Location': url_for('directors_director_view', did=request.id)}
 
 
 @director_ns.route('/<int:did>')
@@ -31,5 +40,8 @@ class DirectorView(Resource):
         DirectorService().put_director(did, **data)
         return "", 204
 
+    @director_ns.response(code=204, description='Deleted')
+    @director_ns.response(code=404, description='Id not found', model=not_found_model)
     def delete(self, did: int):
-        pass
+        DirectorService().del_item(did)
+        return "", 204

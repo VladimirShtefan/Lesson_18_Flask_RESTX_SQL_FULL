@@ -12,3 +12,6 @@ class DirectorService(BaseService[Director]):
 
     def put_director(self, did: int, **kwargs):
         return self.dao.put_director(did, **kwargs)
+
+    def add_director(self, **kwargs) -> Director:
+        return self.dao.add_director(**kwargs)
