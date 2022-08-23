@@ -6,10 +6,6 @@ from app.dao.model.director import Director
 from app.dao.model.genre import Genre
 from app.dao.model.movie import Movie
 from app.exceptions import BadRequest
-from logger import create_logger
-
-
-logger = create_logger(__name__)
 
 
 class MovieDAO(BaseDAO[Movie]):
@@ -35,7 +31,7 @@ class MovieDAO(BaseDAO[Movie]):
         return director_id, genre_id
 
     def get_all_movies(self, **kwargs) -> List[Movie]:
-        movie_query = self._db_session.query(Movie)
+        movie_query = self._db_session.query(self.__model__)
         for key, item in kwargs.items():
             if hasattr(Director, key):
                 if type(item) == str:
@@ -43,8 +39,8 @@ class MovieDAO(BaseDAO[Movie]):
             if hasattr(Genre, key):
                 if type(item) == str:
                     movie_query = movie_query.join(Genre).filter(getattr(Genre, key)).ilike(f'%{item}%')
-            if hasattr(Movie, key):
-                movie_query = movie_query.filter(getattr(Movie, key) == item)
+            if hasattr(self.__model__, key):
+                movie_query = movie_query.filter(getattr(self.__model__, key) == item)
         return movie_query.all()
 
     def add_movie(self, **kwargs) -> Movie:
@@ -55,14 +51,14 @@ class MovieDAO(BaseDAO[Movie]):
             data = {'director_id': director_id, 'genre_id': genre_id}
             data.update(kwargs)
 
-            new_movie = Movie(**data)
+            new_movie = self.__model__(**data)
 
             self._db_session.add(new_movie)
             try:
                 self._db_session.flush()
             except IntegrityError as e:
                 self._db_session.rollback()
-                logger.info(e.orig)
+                self.logger.info(e.orig)
                 raise BadRequest(e.orig)
             else:
                 return new_movie
@@ -76,14 +72,14 @@ class MovieDAO(BaseDAO[Movie]):
             data = {'director_id': director_id, 'genre_id': genre_id}
             data.update(kwargs)
             try:
-                self._db_session.query(Movie).filter_by(id=id).update(data)
+                self._db_session.query(self.__model__).filter_by(id=id).update(data)
             except IntegrityError as e:
                 self._db_session.rollback()
-                logger.info(e.orig)
+                self.logger.info(e.orig)
                 raise BadRequest(e.orig)
             except InvalidRequestError as e:
                 self._db_session.rollback()
-                logger.info(e.args[0])
+                self.logger.info(e.args[0])
                 raise BadRequest(e.args[0])
             else:
                 return ""

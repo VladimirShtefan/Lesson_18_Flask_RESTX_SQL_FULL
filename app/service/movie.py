@@ -16,10 +16,10 @@ class MovieService(BaseService[Movie]):
     def add_movie(self, **kwargs) -> Movie:
         return self.dao.add_movie(**kwargs)
 
-    def put_movie(self, id: int, **kwargs):
+    def put_movie(self, id: int, **kwargs) -> None:
         return self.dao.put_movie(id=id, **kwargs)
 
-    def delete_movie(self, id: int):
+    def delete_movie(self, id: int) -> None:
         return self.dao.delete_row(id=id)
 
     def get_movie(self, id: int) -> Movie:

@@ -8,7 +8,7 @@ class GenreService(BaseService[Genre]):
         super().__init__()
         self.dao = GenreDAO()
 
-    def put_genre(self, gid: int, **kwargs):
+    def put_genre(self, gid: int, **kwargs) -> None:
         return self.dao.put_genre(gid, **kwargs)
 
     def add_genre(self, **kwargs) -> Genre:

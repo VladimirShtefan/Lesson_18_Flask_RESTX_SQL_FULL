@@ -2,6 +2,7 @@ from typing import TypeVar, Generic, List
 from flask import g
 
 from app.setup_db import db
+from logger import create_logger
 
 T = TypeVar('T', bound=db.Model)
 
@@ -11,6 +12,7 @@ class BaseDAO(Generic[T]):
 
     def __init__(self):
         self._db_session = g.session
+        self.logger = create_logger(self.__class__.__name__)
 
     def get_one_by_id(self, id: int) -> T:
         return self._db_session.query(self.__model__).get_or_404(id, description='Id not found')

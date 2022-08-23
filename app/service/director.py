@@ -8,7 +8,7 @@ class DirectorService(BaseService[Director]):
         super().__init__()
         self.dao = DirectorDAO()
 
-    def put_director(self, did: int, **kwargs):
+    def put_director(self, did: int, **kwargs) -> None:
         return self.dao.put_director(did, **kwargs)
 
     def add_director(self, **kwargs) -> Director:

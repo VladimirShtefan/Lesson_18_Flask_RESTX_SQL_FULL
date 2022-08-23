@@ -2,6 +2,8 @@ import calendar
 import hashlib
 import re
 import hmac
+from enum import Enum
+
 import jwt
 from datetime import datetime, timedelta
 from jwt.exceptions import ExpiredSignatureError
@@ -12,8 +14,6 @@ from app.dao.user import UserDAO
 from app.exceptions import ValidationError, UserNotFound, InvalidPassword, TokenExpired
 from app.service.base import BaseService
 
-pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$'
-
 
 class UserService(BaseService[User]):
     def __init__(self):
@@ -21,7 +21,7 @@ class UserService(BaseService[User]):
         self.dao = UserDAO()
 
     @staticmethod
-    def get_hash(password: str) -> hash:
+    def get_hash(password: str) -> bytes:
         hash_password = hashlib.pbkdf2_hmac(
             'sha512',
             password.encode('utf-8'),  # Convert the password to bytes
@@ -31,19 +31,28 @@ class UserService(BaseService[User]):
         return hash_password
 
     @staticmethod
-    def check_reliability(password: str) -> str:
+    def check_reliability(password: str,
+                          pattern=r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$') -> str:
         if re.match(pattern, password) is None:
             raise ValidationError('Password has incorrect format.')
         return password
 
     @staticmethod
-    def generate_tokens(data: dict) -> dict:
-        delay_30_min = datetime.utcnow() + timedelta(minutes=20)
-        delay_90_days = datetime.utcnow() + timedelta(days=90)
-        data['exp'] = calendar.timegm(delay_30_min.timetuple())
-        access_token = jwt.encode(data, SECRET, algorithm=ALGORITHMS)
-        data['exp'] = calendar.timegm(delay_90_days.timetuple())
-        refresh_token = jwt.encode(data, SECRET, algorithm=ALGORITHMS)
+    def add_data_for_token(delta_for_token: dict, data: dict) -> str:
+        """
+
+        :param data: data for token
+        :param delta_for_token: {'minutes': 20} {'days': 90}
+        :return:
+        """
+        delay = datetime.utcnow() + timedelta(**delta_for_token)
+        data['exp'] = calendar.timegm(delay.timetuple())
+        token = jwt.encode(data, SECRET, algorithm=ALGORITHMS)
+        return token
+
+    def generate_tokens(self, data: dict) -> dict:
+        access_token = self.add_data_for_token(data=data, delta_for_token={'minutes': 20})
+        refresh_token = self.add_data_for_token(data=data, delta_for_token={'days': 90})
         return {
             'access_token': access_token,
             'refresh_token': refresh_token,
@@ -66,9 +75,9 @@ class UserService(BaseService[User]):
         return tokens
 
     def create_user(self, **kwargs):
-        password: hash = self.get_hash(self.check_reliability(kwargs.get('password')))
+        password: bytes = self.get_hash(self.check_reliability(kwargs.get('password')))
         username: str = kwargs.get('username')
-        role: str = kwargs.get('role')
+        role: Enum = kwargs.get('role')
         return self.dao.create_user(username, password, role)
 
     def approve_refresh_token(self, refresh_token: str) -> dict:
