@@ -22,3 +22,7 @@ class UserNotFound(BaseAppException):
 
 class InvalidPassword(BaseAppException):
     code = 401
+
+
+class TokenExpired(BaseAppException):
+    code = 401

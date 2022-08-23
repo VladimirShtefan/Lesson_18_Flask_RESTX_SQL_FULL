@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource
 
-from app.dao.model.exceptions import validation_error, bad_request_model
-from app.dao.model.user import user_model
+from app.dao.model.exceptions import bad_request_model
+from app.exceptions import ValidationError, InvalidPassword
 from app.service.parsers import user_parser
 from app.service.user import UserService
 
@@ -11,10 +11,15 @@ user_ns = Namespace('users')
 @user_ns.route('/')
 class UserView(Resource):
     @user_ns.expect(user_parser)
-    @user_ns.marshal_list_with(user_model, code=201, description='Created')
-    @user_ns.response(code=200, description='Password incorrect format.', model=validation_error)
+    @user_ns.response(code=201, description='Created')
+    @user_ns.response(code=401, description='Unauthorized')
     @user_ns.response(code=400, description='Bad request', model=bad_request_model)
     def post(self):
         data = user_parser.parse_args()
-        UserService().create_user(**data)
+        try:
+            UserService().create_user(**data)
+        except ValidationError:
+            return 'Could not verify', 401, {'WWW-Authenticate': 'Bearer error=not strong password'}
+        except InvalidPassword:
+            return 'Could not verify', 401, {'WWW-Authenticate': 'Bearer error=wrong password'}
         return "", 201

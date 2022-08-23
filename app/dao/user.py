@@ -24,3 +24,7 @@ class UserDAO(BaseDAO[User]):
     def search_user(self, username: str) -> User | None:
         user = self._db_session.query(User).filter_by(username=username).first()
         return user
+
+    def add_user_token(self, user: User, refresh_token: str):
+        user.refresh_token = refresh_token
+        self._db_session.flush()

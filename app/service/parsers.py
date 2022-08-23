@@ -28,8 +28,11 @@ user_parser.add_argument('role', default='user', choices=[x.name for x in Role],
                          location='json', type=str, required=True, nullable=False)
 
 access_parser: RequestParser = RequestParser()
-access_parser.add_argument('access_token', location='headers', type=str, required=True, nullable=False)
-access_parser.add_argument('refresh_token', location='headers', type=str, required=True, nullable=False)
+access_parser.add_argument('access_token', location='json', type=str, required=True, nullable=False)
+access_parser.add_argument('refresh_token', location='json', type=str, required=True, nullable=False)
+
+update_access_parser: RequestParser = RequestParser()
+update_access_parser.add_argument('refresh_token', location='json', type=str, required=True, nullable=False)
 
 login_parser: RequestParser = RequestParser()
 login_parser.add_argument('username', location='json', type=str, required=True, nullable=False)
