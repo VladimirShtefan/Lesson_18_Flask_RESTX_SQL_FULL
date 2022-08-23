@@ -11,6 +11,7 @@ def user_required(user_role: list):
     def auth_required(func: Callable):
         @wraps(func)
         def wrapper(*args, **kwargs):
+            print(request.headers.get('Authorization'))
             if 'Authorization' not in request.headers:
                 return 'Could not verify', 401, {'WWW-Authenticate': 'Bearer error=Access denied'}
 
