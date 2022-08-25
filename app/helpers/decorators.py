@@ -23,12 +23,12 @@ def user_required(user_role: list):
                 return 'Could not verify', 401, {'WWW-Authenticate': 'Bearer error=Access denied'}
 
             role = data_token.get('role', 'user')
-            username = data_token.get('username')
+            username = data_token['username']
 
             if role not in user_role:
                 return 'Could not verify', 401, {'WWW-Authenticate': f'Bearer error=Access denied for {username}'}
 
-            return func(*args, **kwargs)
+            return func(*args, **kwargs, username=data_token['username'])
 
         return wrapper
 

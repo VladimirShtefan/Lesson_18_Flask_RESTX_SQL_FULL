@@ -16,7 +16,7 @@ class MoviesView(Resource):
     @movie_ns.expect(movie_filter_parser)
     @movie_ns.marshal_list_with(movie_model, code=200)
     @movie_ns.response(code=401, description='Unauthorized')
-    def get(self):
+    def get(self, username: str):
         data = movie_filter_parser.parse_args()
         return MovieService().get_movies(**data), 200
 
@@ -25,7 +25,7 @@ class MoviesView(Resource):
     @movie_ns.marshal_list_with(movie_model, code=201, description='Created')
     @movie_ns.response(code=400, description='Bad request', model=bad_request_model)
     @movie_ns.response(code=401, description='Unauthorized')
-    def post(self):
+    def post(self, username: str):
         data = movie_model_parser.parse_args()
         request = MovieService().add_movie(**data)
         return request, 201, {'Location': url_for('movies_movie_view', mid=request.id)}
@@ -37,7 +37,7 @@ class MovieView(Resource):
     @movie_ns.marshal_with(movie_model, code=200)
     @movie_ns.response(code=404, description='Id not found', model=not_found_model)
     @movie_ns.response(code=401, description='Unauthorized')
-    def get(self, mid: int):
+    def get(self, mid: int, username: str):
         return MovieService().get_movie(mid), 200
 
     @user_required(['admin'])
@@ -46,7 +46,7 @@ class MovieView(Resource):
     @movie_ns.response(code=404, description='Id not found', model=not_found_model)
     @movie_ns.response(code=400, description='Bad request', model=bad_request_model)
     @movie_ns.response(code=401, description='Unauthorized')
-    def put(self, mid: int):
+    def put(self, mid: int, username: str):
         data = movie_model_parser.parse_args()
         MovieService().put_movie(mid, **data)
         return "", 204
@@ -55,6 +55,6 @@ class MovieView(Resource):
     @movie_ns.response(code=204, description='Deleted')
     @movie_ns.response(code=404, description='Id not found', model=not_found_model)
     @movie_ns.response(code=401, description='Unauthorized')
-    def delete(self, mid: int):
+    def delete(self, mid: int, username: str):
         MovieService().delete_movie(mid)
         return "", 204

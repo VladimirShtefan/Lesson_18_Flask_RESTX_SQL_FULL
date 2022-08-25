@@ -12,11 +12,7 @@ class GenreDAO(BaseDAO[Genre]):
         genre_name = kwargs.get('name')
         try:
             self._db_session.query(self.__model__).filter_by(id=gid).update({'genre_name': genre_name})
-        except IntegrityError as e:
-            self._db_session.rollback()
-            self.logger.info(e.orig)
-            raise BadRequest(e.orig)
-        except InvalidRequestError as e:
+        except (IntegrityError, InvalidRequestError) as e:
             self._db_session.rollback()
             self.logger.info(e.args[0])
             raise BadRequest(e.args[0])

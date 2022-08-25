@@ -15,7 +15,7 @@ class DirectorsView(Resource):
     @user_required(['user', 'admin'])
     @director_ns.marshal_list_with(director_model, code=200)
     @director_ns.response(code=401, description='Unauthorized')
-    def get(self):
+    def get(self, username: str):
         return DirectorService().get_all_items(), 200
 
     @user_required(['admin'])
@@ -23,7 +23,7 @@ class DirectorsView(Resource):
     @director_ns.marshal_list_with(director_model, code=201, description='Created')
     @director_ns.response(code=400, description='Bad request', model=bad_request_model)
     @director_ns.response(code=401, description='Unauthorized')
-    def post(self):
+    def post(self, username: str):
         data = name_model_parser.parse_args()
         request = DirectorService().add_director(**data)
         return request, 201, {'Location': url_for('directors_director_view', did=request.id)}
@@ -35,7 +35,7 @@ class DirectorView(Resource):
     @director_ns.marshal_with(director_model, code=200)
     @director_ns.response(code=404, description='Id not found', model=not_found_model)
     @director_ns.response(code=401, description='Unauthorized')
-    def get(self, did: int):
+    def get(self, did: int, username: str):
         return DirectorService().get_item_by_id(did), 200
 
     @user_required(['admin'])
@@ -44,7 +44,7 @@ class DirectorView(Resource):
     @director_ns.response(code=404, description='Id not found', model=not_found_model)
     @director_ns.response(code=400, description='Bad request', model=bad_request_model)
     @director_ns.response(code=401, description='Unauthorized')
-    def put(self, did: int):
+    def put(self, did: int, username: str):
         data = name_model_parser.parse_args()
         DirectorService().put_director(did, **data)
         return "", 204
@@ -53,6 +53,6 @@ class DirectorView(Resource):
     @director_ns.response(code=204, description='Deleted')
     @director_ns.response(code=404, description='Id not found', model=not_found_model)
     @director_ns.response(code=401, description='Unauthorized')
-    def delete(self, did: int):
+    def delete(self, did: int, username: str):
         DirectorService().del_item(did)
         return "", 204
