@@ -11,10 +11,11 @@ director_ns = Namespace('directors')
 
 
 @director_ns.route('/')
+@director_ns.response(code=401, description='Unauthorized')
+@director_ns.response(code=403, description='Forbidden')
 class DirectorsView(Resource):
     @user_required(('user', 'admin'))
     @director_ns.marshal_list_with(director_model, code=200)
-    @director_ns.response(code=401, description='Unauthorized')
     def get(self, username: str):
         return DirectorService().get_all_items(), 200, {'User_name': username}
 
@@ -22,7 +23,6 @@ class DirectorsView(Resource):
     @director_ns.expect(name_model_parser)
     @director_ns.marshal_list_with(director_model, code=201, description='Created')
     @director_ns.response(code=400, description='Bad request', model=bad_request_model)
-    @director_ns.response(code=401, description='Unauthorized')
     def post(self, username: str):
         data = name_model_parser.parse_args()
         request = DirectorService().add_director(**data)
@@ -30,11 +30,12 @@ class DirectorsView(Resource):
 
 
 @director_ns.route('/<int:did>')
+@director_ns.response(code=401, description='Unauthorized')
+@director_ns.response(code=403, description='Forbidden')
 class DirectorView(Resource):
     @user_required(('user', 'admin'))
     @director_ns.marshal_with(director_model, code=200)
     @director_ns.response(code=404, description='Id not found', model=not_found_model)
-    @director_ns.response(code=401, description='Unauthorized')
     def get(self, did: int, username: str):
         return DirectorService().get_item_by_id(did), 200, {'User_name': username}
 
@@ -43,7 +44,6 @@ class DirectorView(Resource):
     @director_ns.response(code=204, description='Updated')
     @director_ns.response(code=404, description='Id not found', model=not_found_model)
     @director_ns.response(code=400, description='Bad request', model=bad_request_model)
-    @director_ns.response(code=401, description='Unauthorized')
     def put(self, did: int, username: str):
         data = name_model_parser.parse_args()
         DirectorService().put_director(did, **data)
@@ -52,7 +52,6 @@ class DirectorView(Resource):
     @user_required(tuple('admin'))
     @director_ns.response(code=204, description='Deleted')
     @director_ns.response(code=404, description='Id not found', model=not_found_model)
-    @director_ns.response(code=401, description='Unauthorized')
     def delete(self, did: int, username: str):
         DirectorService().del_item(did)
         return "", 204, {'User_name': username}

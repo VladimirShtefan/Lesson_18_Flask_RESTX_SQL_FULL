@@ -6,14 +6,16 @@ from functools import wraps
 from typing import Callable
 
 from app.constants import SECRET, ALGORITHMS
+from app.dao.model.user import Role
+from app.exceptions import AccessDenied
 
 
-def user_required(user_role: tuple):
+def user_required(*user_role):
     def auth_required(func: Callable):
         @wraps(func)
         def wrapper(*args, **kwargs):
             if 'Authorization' not in request.headers:
-                abort(401, 'Could not verify', error={'WWW-Authenticate': 'Bearer error=Access denied'})
+                return {'error': 'Auth-required'}, 401, {'WWW-Authenticate': 'Bearer error=Access denied'}
 
             data = request.headers['Authorization']
             token = data.split('Bearer ')[-1]
@@ -21,15 +23,14 @@ def user_required(user_role: tuple):
             try:
                 data_token = jwt.decode(token, SECRET, algorithms=[ALGORITHMS])
             except PyJWTError:
-                abort(401, 'Could not verify', error={'WWW-Authenticate': 'Bearer error=Access denied'})
+                return {'error': 'Auth-required'}, 401, {'WWW-Authenticate': 'Bearer error=Access denied'}
             else:
-                role = data_token.get('role', 'user')
+                role = Role(data_token.get('role', 'user'))
                 username = data_token['username']
 
                 if role not in user_role:
-                    abort(401, 'Could not verify', error={
-                        'WWW-Authenticate': f'Bearer error=Access denied for {username}'
-                    })
+                    return {'error': 'Auth-required'}, 403, \
+                           {'WWW-Authenticate': f'Bearer error=Access denied for {username}'}
 
                 return func(*args, **kwargs, username=data_token['username'])
 

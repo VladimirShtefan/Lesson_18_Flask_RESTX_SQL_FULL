@@ -1,5 +1,3 @@
-from enum import Enum
-
 from app.dao.base import BaseDAO
 from app.dao.model.user import User, Role
 from sqlalchemy.exc import IntegrityError
@@ -10,8 +8,7 @@ from app.exceptions import BadRequest
 class UserDAO(BaseDAO[User]):
     __model__ = User
 
-    def create_user(self, username: str, password: bytes, role: Enum):
-        print(role)
+    def create_user(self, username: str, password: bytes, role: Role):
         new_user = User(username=username, password=password, role=role)
         self._db_session.add(new_user)
         try:

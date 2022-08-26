@@ -2,14 +2,13 @@ import calendar
 import hashlib
 import re
 import hmac
-from enum import Enum
 
 import jwt
 from datetime import datetime, timedelta
 from jwt.exceptions import ExpiredSignatureError
 
 from app.constants import SECRET, ALGORITHMS, PWD_HASH_SALT, PWD_HASH_ITERATIONS
-from app.dao.model.user import User
+from app.dao.model.user import User, Role
 from app.dao.user import UserDAO
 from app.exceptions import ValidationError, UserNotFound, InvalidPassword, TokenExpired
 from app.service.base import BaseService
@@ -42,7 +41,7 @@ class UserService(BaseService[User]):
         """
 
         :param data: data for token
-        :param delta_for_token: {'minutes': 20} {'days': 90}
+        :param delta_for_token: {'minutes': 60} {'days': 90}
         :return:
         """
         delay = datetime.utcnow() + timedelta(**delta_for_token)
@@ -51,7 +50,7 @@ class UserService(BaseService[User]):
         return token
 
     def generate_tokens(self, data: dict) -> dict:
-        access_token = self.add_data_for_token(data=data, delta_for_token={'minutes': 20})
+        access_token = self.add_data_for_token(data=data, delta_for_token={'minutes': 60})
         refresh_token = self.add_data_for_token(data=data, delta_for_token={'days': 90})
         return {
             'access_token': access_token,
@@ -68,7 +67,6 @@ class UserService(BaseService[User]):
 
         if not hmac.compare_digest(user.password, password):
             raise InvalidPassword('Invalid password')
-
         data = {'username': user.username, 'role': user.role.name}
         tokens = self.generate_tokens(data)
         self.dao.add_user_token(user, tokens.get('refresh_token'))
@@ -77,8 +75,8 @@ class UserService(BaseService[User]):
     def create_user(self, **kwargs):
         password: bytes = self.get_hash(self.check_reliability(kwargs.get('password')))
         username: str = kwargs.get('username')
-        role: Enum = kwargs.get('role')
-        return self.dao.create_user(username, password, role)
+        role: str = kwargs.get('role')
+        return self.dao.create_user(username, password, Role(role))
 
     def approve_refresh_token(self, refresh_token: str) -> dict:
         try:

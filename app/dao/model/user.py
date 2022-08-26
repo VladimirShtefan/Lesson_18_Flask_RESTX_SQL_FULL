@@ -7,8 +7,8 @@ from app.setup_db import db
 
 
 class Role(enum.Enum):
-    user = 1
-    admin = 2
+    user = 'user'
+    admin = 'admin'
 
 
 class User(db.Model):

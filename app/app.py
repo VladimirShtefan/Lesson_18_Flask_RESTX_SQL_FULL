@@ -1,6 +1,6 @@
 from flask import Flask, g
 
-from app.exceptions import BaseAppException
+from app.exceptions import BaseAppException, AccessDenied
 from app.setup_api import api
 from app.setup_db import db
 from app.views.view_directors import director_ns
@@ -45,9 +45,15 @@ def register_extensions(app: Flask):
     api.add_namespace(auth_ns)
     api.add_namespace(user_ns)
 
+    # @api.errorhandler(BaseAppException)
+    # def get_exception(e: BaseAppException):
+    #     return {
+    #                'error': str(e.message),
+    #                'code': e.code
+    #            }, e.code
+
     @api.errorhandler(BaseAppException)
-    def get_exception(e: BaseAppException):
-        return {
-                   'error': str(e.message),
-                   'code': e.code
-               }, e.code
+    @api.header('My-Header', 'Some description')
+    def handle_fake_exception_with_header(error):
+        '''This is a custom error'''
+        return {'message': error.message}, 400, {'My-Header': 'Value'}
