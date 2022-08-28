@@ -1,21 +1,25 @@
+from unittest.mock import MagicMock
+
+
 class TestMovieDAO:
-    sample_movie = {
-            "title": "Test",
-            "description": "Test",
-            "trailer": "Test",
-            "year": 2022,
-            "rating": 1,
-            "genre_name": 'Test',
-            "director_name": 'Test',
-    }
+    def test_get_one_by_id(self, mock_movie_dao):
+        mock_db_session = MagicMock()
+        mock_db_session.query.return_value.get_or_404.return_value = {'id': 1}
 
-    def test_get_movies(self, movie_dao):
-        all_movies = movie_dao.get_all_movies()
-        assert isinstance(all_movies, list)
-        assert all_movies[1].year == 2015
-        assert len(all_movies) > 1
+        mock_movie_dao.db_session = mock_db_session
 
-    def test_add_movie(self, movie_dao):
-        new_movie = movie_dao.add_movie(**self.sample_movie)
-        assert new_movie.id == 21
-        assert new_movie.genre_id == 19
+        assert mock_movie_dao.get_one_by_id(1) == {'id': 1}
+
+    def test_get_all_movies(self, mock_movie_dao):
+        mock_db_session = MagicMock()
+        query = mock_db_session.query
+        query.return_value.join.return_value.filter_by.return_value.all.return_value = [
+            {"director_name": "Тейлор Шеридан", "pk": 1}
+        ]
+        query.return_value.all.return_value = [{'id': 1}, {'id': 2}]
+
+        mock_movie_dao.db_session = mock_db_session
+        assert mock_movie_dao.get_all_movies() == [{'id': 1}, {'id': 2}]
+        assert mock_movie_dao.get_all_movies(director_name='Тейлор Шеридан') == [{"director_name": "Тейлор Шеридан", "pk": 1}]
+
+
