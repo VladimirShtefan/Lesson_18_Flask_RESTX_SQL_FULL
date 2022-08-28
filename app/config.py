@@ -24,3 +24,10 @@ class DevConfig(Config):
 
 class ProdConfig(Config):
     ENV = 'production'
+
+
+class TestConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    DEBUG = True
+    SQLALCHEMY_ECHO = True

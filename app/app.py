@@ -1,4 +1,5 @@
 from flask import Flask, g
+from sqlalchemy.exc import DBAPIError
 
 from app.exceptions import BadRequest
 from app.setup_api import api
@@ -26,11 +27,13 @@ def create_app(config_object) -> Flask:
         if getattr(g, 'session'):
             try:
                 g.session.commit()
-            except:
+            except DBAPIError as e:
+                logger.debug(e)
                 g.session.rollback()
             finally:
                 g.session.close()
         return response
+
     return application
 
 
