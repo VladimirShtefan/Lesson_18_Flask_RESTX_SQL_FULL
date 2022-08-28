@@ -24,3 +24,8 @@ class DevConfig(Config):
 
 class ProdConfig(Config):
     ENV = 'production'
+
+
+class TestConfig(Config):
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    ENV = 'development'

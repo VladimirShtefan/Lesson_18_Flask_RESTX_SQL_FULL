@@ -1,13 +1,11 @@
 import jwt
 from jwt.exceptions import PyJWTError
 from flask import request
-from flask_restx import abort
 from functools import wraps
 from typing import Callable
 
 from app.constants import SECRET, ALGORITHMS
 from app.dao.model.user import Role
-from app.exceptions import AccessDenied
 
 
 def user_required(*user_role):

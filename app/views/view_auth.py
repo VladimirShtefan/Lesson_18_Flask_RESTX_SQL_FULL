@@ -26,4 +26,4 @@ class AuthView(Resource):
         try:
             return UserService().update_tokens(tokens), 201
         except TokenExpired:
-            return 'Could not verify', 401, {'WWW-Authenticate': 'Bearer error=invalid_refresh_token'}
+            return {'error': 'Auth-required'}, 401, {'WWW-Authenticate': 'Bearer error=invalid_refresh_token'}

@@ -19,7 +19,7 @@ class UserView(Resource):
         try:
             UserService().create_user(**data)
         except ValidationError:
-            return 'Could not verify', 401, {'WWW-Authenticate': 'Bearer error=not strong password'}
+            return {'error': 'Auth-required'}, 401, {'WWW-Authenticate': 'Bearer error=not strong password'}
         except InvalidPassword:
-            return 'Could not verify', 401, {'WWW-Authenticate': 'Bearer error=wrong password'}
+            return {'error': 'Auth-required'}, 401, {'WWW-Authenticate': 'Bearer error=wrong password'}
         return "", 201
