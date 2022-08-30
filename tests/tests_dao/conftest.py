@@ -19,6 +19,3 @@ def movie_dao(database):
 @pytest.fixture()
 def director_dao(database):
     return DirectorDAO(database.session)
-
-
-

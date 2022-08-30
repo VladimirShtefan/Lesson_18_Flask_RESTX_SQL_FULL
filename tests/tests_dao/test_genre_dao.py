@@ -36,7 +36,7 @@ def test_add_genre_success(genre_dao, create_models):
 
 def test_add_genre_exception(genre_dao, create_models):
     create_models(name_model=Genre, number_of_models=2, genre_name='test_genre')
-    with pytest.raises(BadRequest) as _e:
+    with pytest.raises(BadRequest):
         genre_dao.add_genre(name='test_genre_1')
 
 

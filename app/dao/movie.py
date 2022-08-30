@@ -35,10 +35,10 @@ class MovieDAO(BaseDAO[Movie]):
         for key, item in kwargs.items():
             if hasattr(Director, key):
                 if type(item) == str:
-                    movie_query = movie_query.join(Director).filter_by(getattr(Director, key).ilike(f'%{item}%'))
+                    movie_query = movie_query.join(Director).filter(getattr(Director, key).ilike(f'%{item}%'))
             if hasattr(Genre, key):
                 if type(item) == str:
-                    movie_query = movie_query.join(Genre).filter_by(getattr(Genre, key)).ilike(f'%{item}%')
+                    movie_query = movie_query.join(Genre).filter(getattr(Genre, key).ilike(f'%{item}%'))
             if hasattr(self.__model__, key):
                 movie_query = movie_query.filter(getattr(self.__model__, key) == item)
         return movie_query.all()

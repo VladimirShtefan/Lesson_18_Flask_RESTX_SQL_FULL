@@ -34,7 +34,7 @@ def test_add_director_success(director_dao, create_models):
 
 def test_add_director_exception(director_dao, create_models):
     create_models(name_model=director_dao.__model__, number_of_models=2, director_name='test_director')
-    with pytest.raises(BadRequest) as _e:
+    with pytest.raises(BadRequest):
         director_dao.add_director(name='test_director_1')
 
 
