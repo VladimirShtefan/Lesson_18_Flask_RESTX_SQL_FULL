@@ -1,1 +1,1 @@
-coverage run -m pytest
+pytest --cov-report term-missing --cov=app tests/

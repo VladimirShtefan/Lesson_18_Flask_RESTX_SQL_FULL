@@ -12,11 +12,7 @@ class DirectorDAO(BaseDAO[Director]):
         director_name = kwargs.get('name')
         try:
             self.db_session.query(self.__model__).filter_by(id=did).update({'director_name': director_name})
-        except IntegrityError as e:
-            self.db_session.rollback()
-            self.logger.info(e.orig)
-            raise BadRequest(e.orig)
-        except InvalidRequestError as e:
+        except (IntegrityError, InvalidRequestError) as e:
             self.db_session.rollback()
             self.logger.info(e.args[0])
             raise BadRequest(e.args[0])
