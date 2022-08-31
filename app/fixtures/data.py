@@ -197,5 +197,5 @@ DATA = {
         {"genre_name": "Фантастика", "pk": 7}, {"genre_name": "Аниме", "pk": 8}, {"genre_name": "Документальное", "pk": 9},
         {"genre_name": "Короткометражка", "pk": 10}, {"genre_name": "Ужасы", "pk": 11}, {"genre_name": "Боевик", "pk": 12},
         {"genre_name": "Мелодрама", "pk": 13}, {"genre_name": "Детектив", "pk": 14}, {"genre_name": "Авторское кино", "pk": 15},
-        {"genre_name": "Мультфильм", "pk": 16}, {"genre_name": "Вестерн", "pk": 17}, {"genre_name": "Мюзикл", "pk": 18}],
+        {"genre_name": "Мультфильм", "pk": 16}, {"genre_name": "Вестерн", "pk": 17}, {"genre_name": "Мюзикл", "pk": 18}]
 }

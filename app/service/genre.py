@@ -1,5 +1,3 @@
-from typing import List
-
 from app.dao.genre import GenreDAO
 from app.dao.model.genre import Genre
 from app.service.base import BaseService
@@ -10,8 +8,8 @@ class GenreService(BaseService[Genre]):
         super().__init__()
         self.dao = GenreDAO()
 
-    def get_all_genres(self) -> List[Genre]:
-        return self.dao.get_all_items()
+    def put_genre(self, gid: int, **kwargs) -> None:
+        return self.dao.put_genre(gid, **kwargs)
 
-    def get_genre(self, gid: int) -> Genre:
-        return self.dao.get_one_by_id(gid)
+    def add_genre(self, **kwargs) -> Genre:
+        return self.dao.add_genre(**kwargs)

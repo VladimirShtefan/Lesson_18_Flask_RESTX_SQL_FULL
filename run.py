@@ -17,3 +17,6 @@ match os.environ.get('FLASK_ENV'):
     case _:
         logger.critical('FLASK_ENV dont set')
         raise RuntimeError('Need to set environment variable FLASK_ENV')
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)

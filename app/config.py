@@ -12,7 +12,7 @@ class Config(object):
     RESTX_MASK_SWAGGER = False
     DEBUG = False
     TESTING = False
-    # ERROR_INCLUDE_MESSAGE = False
+    ERROR_INCLUDE_MESSAGE = False
 
 
 class DevConfig(Config):
@@ -24,3 +24,10 @@ class DevConfig(Config):
 
 class ProdConfig(Config):
     ENV = 'production'
+
+
+class TestConfig(Config):
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    TESTING = True
+    DEBUG = True
+    # SQLALCHEMY_ECHO = True

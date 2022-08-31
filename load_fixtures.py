@@ -12,7 +12,7 @@ from logger import create_logger
 logger = create_logger('create_models')
 
 
-def _load_fixtures():
+def _load_fixtures(database=db):
     for movie in DATA["movies"]:
         m = Movie(
             id=movie["pk"],
@@ -24,29 +24,30 @@ def _load_fixtures():
             genre_id=movie["genre_id"],
             director_id=movie["director_id"],
         )
-        db.session.add(m)
+        database.session.add(m)
 
     for director in DATA["directors"]:
         d = Director(
             id=director["pk"],
             director_name=director["director_name"],
         )
-        db.session.add(d)
+        database.session.add(d)
 
     for genre in DATA["genres"]:
         d = Genre(
             id=genre["pk"],
             genre_name=genre["genre_name"],
         )
-        db.session.add(d)
+        database.session.add(d)
     try:
-        db.session.commit()
+        database.session.commit()
         logger.info('База создана успешно')
-        db.session.close()
+        print('База заполнена')
+        database.session.close()
     except IntegrityError:
         logger.info('База уже создана или переданы не верные данные, проверьте базу')
-        db.session.rollback()
-        db.session.close()
+        database.session.rollback()
+        database.session.close()
 
 
 if __name__ == '__main__':

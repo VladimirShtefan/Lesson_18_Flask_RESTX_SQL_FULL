@@ -1,11 +1,14 @@
 from flask import Flask, g
+from sqlalchemy.exc import DBAPIError
 
-from app.exceptions import BadRequest
+from app.exceptions import BaseAppException
 from app.setup_api import api
 from app.setup_db import db
 from app.views.view_directors import director_ns
 from app.views.view_genres import genre_ns
 from app.views.view_movies import movie_ns
+from app.views.view_auth import auth_ns
+from app.views.view_user import user_ns
 from logger import create_logger
 
 logger = create_logger(__name__)
@@ -26,7 +29,8 @@ def create_app(config_object) -> Flask:
         if getattr(g, 'session'):
             try:
                 g.session.commit()
-            except:
+            except DBAPIError as e:
+                logger.debug(e)
                 g.session.rollback()
             finally:
                 g.session.close()
@@ -40,9 +44,11 @@ def register_extensions(app: Flask):
     api.add_namespace(movie_ns)
     api.add_namespace(genre_ns)
     api.add_namespace(director_ns)
+    api.add_namespace(auth_ns)
+    api.add_namespace(user_ns)
 
-    @api.errorhandler(BadRequest)
-    def bad_request_400(e: BadRequest):
+    @api.errorhandler(BaseAppException)
+    def get_exception(e: BaseAppException):
         return {
                    'error': str(e.message),
                    'code': e.code

@@ -18,5 +18,3 @@ class BaseService(Generic[TS]):
 
     def get_all_items(self) -> List[TS]:
         return self.dao.get_all_items()
-
-

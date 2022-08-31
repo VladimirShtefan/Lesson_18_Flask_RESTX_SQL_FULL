@@ -10,3 +10,23 @@ class NotFound(BaseAppException):
 
 class BadRequest(BaseAppException):
     code = 400
+
+
+class ValidationError(BaseAppException):
+    code = 200
+
+
+class UserNotFound(BaseAppException):
+    code = 401
+
+
+class InvalidPassword(BaseAppException):
+    code = 401
+
+
+class TokenExpired(BaseAppException):
+    code = 401
+
+
+class AccessDenied(BaseAppException):
+    code = 401
